@@ -3,11 +3,13 @@ package uk.ac.westminster.products_api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 /**
  * Simple text endpoints:
  *   GET /hello    -> a greeting
  *   GET /goodbye  -> a farewell
- *   GET /status   -> a status message
+ *   GET /status   -> a status message including today's date
  */
 @RestController
 public class HelloController {
@@ -24,7 +26,7 @@ public class HelloController {
 
     @GetMapping("/status")
     public String status() {
-        return "API is running — Tutorial 1";
+        return "API is running — Tutorial 1 — " + LocalDate.now().toString();
     }
 
 }
