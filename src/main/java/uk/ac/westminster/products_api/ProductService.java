@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Owns the product catalogue and the rules about it.
@@ -37,6 +38,17 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         products.removeIf(p -> p.getId().equals(id)); // safe, unlike remove() inside a for loop
+    }
+
+    /**
+     * Products whose name contains the given text, ignoring upper/lower case.
+     * Read it as: go through the list, keep the ones that match, collect what survived.
+     */
+    public List<Product> findByName(String name) {
+        String wanted = name.toLowerCase();
+        return products.stream()
+                .filter(p -> p.getName() != null && p.getName().toLowerCase().contains(wanted))
+                .collect(Collectors.toList());
     }
 
 }
