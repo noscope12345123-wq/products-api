@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Owns the product catalogue and the rules about it.
@@ -26,6 +27,12 @@ public class ProductService {
         product.setId(nextId++); // use the value, then add one
         products.add(product);
         return product;
+    }
+
+    public Optional<Product> getProductById(Long id) {
+        return products.stream()
+                .filter(p -> p.getId().equals(id)) // .equals, never == on Long
+                .findFirst();
     }
 
 }
