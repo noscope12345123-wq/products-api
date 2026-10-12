@@ -7,6 +7,9 @@ package uk.ac.westminster.products_api;
  * directly. Spring's JSON converter (Jackson) builds the response from
  * the public getters: getId() -> "id", getName() -> "name",
  * getPrice() -> "price". Without the getters the response would be {}.
+ *
+ * The setters are used by ProductService (setId) and by Jackson, which
+ * builds a Product from the JSON body of a POST request.
  */
 public class Product {
 
@@ -33,6 +36,18 @@ public class Product {
 
     public double getPrice() {
         return price;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
 }
