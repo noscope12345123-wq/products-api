@@ -1,5 +1,9 @@
 package uk.ac.westminster.products_api;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 /**
  * An encapsulated product.
  *
@@ -10,7 +14,20 @@ package uk.ac.westminster.products_api;
  *
  * The setters are used by ProductService (setId) and by Jackson, which
  * builds a Product from the JSON body of a POST request.
+ *
+ * The three Jackson annotations tell the JSON converter which subclass
+ * an object is. Every product in a response gets a "type" field
+ * ("product", "digital" or "physical"), and a POST body can send
+ * "type": "digital" so that Jackson builds a DigitalProduct instead of
+ * a plain Product. Without "type", a plain Product is created.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY,
+        property = "type", defaultImpl = Product.class)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = DigitalProduct.class, name = "digital"),
+        @JsonSubTypes.Type(value = PhysicalProduct.class, name = "physical")
+})
+@JsonTypeName("product")
 public class Product {
 
     private Long id;

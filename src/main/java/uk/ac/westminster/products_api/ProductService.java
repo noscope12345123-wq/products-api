@@ -20,6 +20,15 @@ public class ProductService {
     private List<Product> products = new ArrayList<>();
     private Long nextId = 1L;
 
+    // Seeding both types: one List<Product>, two kinds of product.
+    // No cast is needed - a DigitalProduct IS-A Product, and so is a PhysicalProduct.
+    public ProductService() {
+        products.add(new DigitalProduct(nextId++, "Java eBook", 9.99,
+                "https://example.com/downloads/java-ebook.pdf", 12.5));
+        products.add(new PhysicalProduct(nextId++, "Mechanical Keyboard", 79.99,
+                0.9, "44 x 14 x 4 cm"));
+    }
+
     public List<Product> getAllProducts() {
         return products;
     }
