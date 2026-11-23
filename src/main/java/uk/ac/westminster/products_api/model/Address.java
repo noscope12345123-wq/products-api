@@ -1,4 +1,4 @@
-package uk.ac.westminster.products_api;
+package uk.ac.westminster.products_api.model;
 
 /**
  * A postal address. A Customer has an Address (association).

@@ -1,0 +1,22 @@
+@startuml post-sequence
+title POST /products
+skinparam responseMessageBelowArrow true
+
+actor Client
+participant "ProductController" as C
+participant "ProductService" as S
+participant "ProductRepository" as R
+
+Client -> C : POST /products {type, name, price}
+activate C
+C -> S : addProduct(product)
+activate S
+S -> R : save(product)
+activate R
+R --> S : savedProduct (id assigned)
+deactivate R
+S --> C : savedProduct
+deactivate S
+C --> Client : 201 Created {id, type, name, price}
+deactivate C
+@enduml

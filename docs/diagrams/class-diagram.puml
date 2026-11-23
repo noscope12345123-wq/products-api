@@ -1,0 +1,128 @@
+@startuml class-diagram
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+hide empty members
+title products-api - class diagram
+
+package controller {
+  class ProductController <<RestController>> {
+    - productService : ProductService
+    + ProductController(productService : ProductService)
+    + getAllProducts() : List<Product>
+    + getSummaries() : List<String>
+    + getProductById(id : Long) : Product
+    + addProduct(product : Product) : Product
+    + deleteProduct(id : Long) : void
+    + findByName(name : String) : List<Product>
+  }
+}
+
+package service {
+  class ProductService <<Service>> {
+    - repository : ProductRepository
+    + ProductService(repository : ProductRepository)
+    + getAllProducts() : List<Product>
+    + getProductById(id : Long) : Product
+    + addProduct(product : Product) : Product
+    + deleteProduct(id : Long) : void
+    + getAllSummaries() : List<String>
+    + findByName(name : String) : List<Product>
+  }
+}
+
+package repository {
+  interface ProductRepository <<interface>> {
+    + findAll() : List<Product>
+    + findById(id : Long) : Optional<Product>
+    + save(product : Product) : Product
+    + delete(id : Long) : void
+  }
+  class InMemoryProductRepository <<Repository>> {
+    - store : Map<Long, Product>
+    - nextId : Long
+    + findAll() : List<Product>
+    + findById(id : Long) : Optional<Product>
+    + save(product : Product) : Product
+    + delete(id : Long) : void
+  }
+}
+
+package exception {
+  class GlobalExceptionHandler <<RestControllerAdvice>> {
+    + handleNotFound(ex : ProductNotFoundException) : ResponseEntity<ErrorResponse>
+    + handleBadRequest(ex : IllegalArgumentException) : ResponseEntity<ErrorResponse>
+  }
+  class ProductNotFoundException {
+    + ProductNotFoundException(id : Long)
+  }
+  class ErrorResponse {
+    - message : String
+    - status : int
+    - timestamp : LocalDateTime
+  }
+}
+
+package model {
+  abstract class Product {
+    - id : Long
+    - name : String
+    - price : double
+    + {abstract} getSummary() : String
+    + setPrice(price : double) : void
+  }
+  interface Discountable <<interface>> {
+    + applyDiscount(rate : double) : void
+    + getDiscountedPrice() : double
+  }
+  class DigitalProduct {
+    - downloadUrl : String
+    - fileSizeMB : double
+    - discountRate : double
+    + getSummary() : String
+    + applyDiscount(rate : double) : void
+    + getDiscountedPrice() : double
+  }
+  class PhysicalProduct {
+    - weightKg : double
+    - dimensions : String
+    - discountRate : double
+    + getSummary() : String
+    + applyDiscount(rate : double) : void
+    + getDiscountedPrice() : double
+  }
+  class BundleProduct {
+    - items : List<Product>
+    + getSummary() : String
+  }
+}
+
+class RuntimeException
+
+' association: a field of that type (solid line, open arrowhead)
+ProductController --> ProductService
+ProductService --> ProductRepository
+
+' realisation: dashed line, hollow triangle at the interface
+ProductRepository <|.. InMemoryProductRepository
+Discountable <|.. DigitalProduct
+Discountable <|.. PhysicalProduct
+
+' inheritance: solid line, hollow triangle at the parent
+Product <|-- DigitalProduct
+Product <|-- PhysicalProduct
+Product <|-- BundleProduct
+RuntimeException <|-- ProductNotFoundException
+
+' aggregation: these classes hold products
+BundleProduct o--> "0..*" Product : items
+InMemoryProductRepository o--> "0..*" Product : store
+
+' dependency: uses or throws, no field (dashed line, open arrowhead)
+ProductService ..> ProductNotFoundException : throws
+GlobalExceptionHandler ..> ProductNotFoundException : handles
+GlobalExceptionHandler ..> ErrorResponse : creates
+
+note bottom of Product
+  Getters, setters and constructors omitted.
+end note
+@enduml

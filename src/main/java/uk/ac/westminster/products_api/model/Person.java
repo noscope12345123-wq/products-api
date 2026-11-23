@@ -1,4 +1,4 @@
-package uk.ac.westminster.products_api;
+package uk.ac.westminster.products_api.model;
 
 /**
  * A simple person with a name and an email address.

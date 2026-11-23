@@ -1,4 +1,4 @@
-package uk.ac.westminster.products_api;
+package uk.ac.westminster.products_api.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +30,17 @@ public class BundleProduct extends Product {
         this.items = items;
     }
 
+    @Override
+    public String getSummary() {
+        return "Bundle: " + getName() + " | " + (items == null ? 0 : items.size()) + " items";
+    }
+
     public List<Product> getItems() {
         return items;
+    }
+
+    public void setItems(List<Product> items) {
+        this.items = items;
     }
 
 }

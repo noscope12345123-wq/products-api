@@ -1,0 +1,32 @@
+@startuml get-by-id-404-sequence
+title GET /products/{id} - id does not exist
+skinparam responseMessageBelowArrow true
+
+actor Client
+participant "GlobalExceptionHandler" as H
+participant "ProductController" as C
+participant "ProductService" as S
+participant "ProductRepository" as R
+
+Client -> C : GET /products/99
+activate C
+C -> S : getProductById(99)
+activate S
+S -> R : findById(99)
+activate R
+R --> S : Optional.empty()
+deactivate R
+S --> C : throws ProductNotFoundException(99)
+deactivate S
+C -> H : ProductNotFoundException
+deactivate C
+activate H
+H --> Client : 404 Not Found ErrorResponse {message: "Product not found with id: 99", status: 404, timestamp}
+deactivate H
+
+note over H, C
+  Strictly, Spring's DispatcherServlet passes the exception
+  to the handler; drawing it from the controller is the
+  accepted simplification.
+end note
+@enduml
